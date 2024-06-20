@@ -26,6 +26,7 @@ function Signup() {
   useEffect(() => {
     if (is_Authenticated){
       navigate("/home");
+      console.log('homehomehomehomeheomeheomeheomeheomehoem')
     }
   },[is_Authenticated])
   

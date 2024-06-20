@@ -1,13 +1,27 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import './HomePage.css'
+import { useNavigate } from 'react-router-dom';
+import { useSelector,useDispatch } from 'react-redux';
+import { userLogout } from '../../features/Loginslice';
 
 function Homepage() {
 
     const[showDropdown,setShowDropDown] = useState(false);
-
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const is_Authenticated = useSelector((state) =>state.login.is_Authenticated)
+   
     const handleDropdown = () => {
         setShowDropDown(!showDropdown)
     }
+
+    useEffect(() => {
+        if(is_Authenticated){
+            navigate("/home")
+        }else{
+            navigate("/")
+        }
+    },[is_Authenticated])
 
   return (
 
@@ -72,7 +86,7 @@ function Homepage() {
                                     <button 
                                     className='bg-white block px-4 py-2 text-sm text-black hover:bg-gray-300 w-full h-full text-left'
                                     role='menu'
-                                
+                                    onClick={() => navigate("/profile")}
                                     
                                     >
                                         View Profile
@@ -82,8 +96,7 @@ function Homepage() {
                                     <button 
                                     className='bg-white block px-4 py-2 text-sm text-black hover:bg-gray-300 w-full h-full text-left'
                                     role='menu'
-                                
-                                    
+                                    onClick={() =>{dispatch(userLogout())}}
                                     >
                                         Logout
                                     </button>

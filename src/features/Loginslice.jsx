@@ -5,8 +5,8 @@ import Cookies from 'js-cookie';
 const initialState = {
     loader:false,
     is_Authenticated:false,
-    error:{},
-    user:{},
+    error: {},
+    user: {} ,
     success:false,
 };
 
@@ -23,13 +23,16 @@ const userLoginSlice = createSlice({
         userLogout:(state) =>{
             Cookies.remove("accessToken");
             Cookies.remove("detail");
+            localStorage.removeItem("accessToken")
             state.is_Authenticated = false;
             state.success = false;
         },
-        datFetch:(state) => {
+        dataFetch:(state) => {
             try {
+                console.log('user')
                 state.user = JSON.parse(Cookies.get('accessToken'));
             }catch(e){
+                console.log(e)
                 state.user = {};
             }
         }
@@ -41,15 +44,12 @@ const userLoginSlice = createSlice({
             state.loader = true;
             state.is_Authenticated = false;
         })
-        .addCase(LoginUser.fulfilled,(state,action) =>{
+        .addCase(LoginUser.fulfilled,(state) =>{
             state.loader = false;
             state.success = true;
             state.is_Authenticated = true;
-            try{
-                state.user = JSON.parse(Cookies.get('accessToken'));
-            }catch(e) {
-                console.log(e);
-            }
+            state.user = JSON.parse(Cookies.get('accessToken'));
+            
         })
         .addCase(LoginUser.rejected,(state,action) => {
             state.loader = false;
@@ -68,6 +68,13 @@ export const {
      userLogined,
      userLogout,
      dataFetch,
-}  = userLoginSlice.reducer
+}  = userLoginSlice.actions
 
 export default userLoginSlice.reducer;
+
+
+
+
+
+
+

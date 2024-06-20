@@ -4,14 +4,13 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import {jwtDecode} from 'jwt-decode'
 import {toast} from 'react-toastify'
-import { Await, json } from 'react-router-dom'
 
 export const LoginUser = createAsyncThunk(
     "login",
     async(data,{rejectWithValue}) => {
         try {
             const response = await axios.post(
-                `${base_url}api/token/userdata`,
+                `${base_url}api/token/userdata/`,
                 data,
                 {
                     headers:{
@@ -24,7 +23,7 @@ export const LoginUser = createAsyncThunk(
             Cookies.set("detail",JSON.stringify(response.data),{expires:2});
             Cookies.set(
                 "accessToken",
-                JSON.stringify(jwtDecode(response.data.access)),
+                JSON.stringify((response.data.access)),
                 {expires:1}
             );
             toast.success("User logged in successfully");
@@ -33,10 +32,13 @@ export const LoginUser = createAsyncThunk(
 
         }catch(error){
             if (error.response){
+                console.error(error.response,)
                 toast.error("Give valid Credentials")
                 return rejectWithValue(error.response.data);
             }else{
-                toast.error("Give valid Credentials");
+                console.log(error)
+
+                toast.error(error);
                 return rejectWithValue(error.response.data);
             }
         }
@@ -72,9 +74,9 @@ axios.interceptors.request.use(async(config) => {
 
         if (exp && exp-currentTime < 60){
             const newAccessToken = await refreshToken();
-            config.headers.Authorization = `Bearer${newAccessToken}`;
+            config.headers.Authorization = `Bearer ${newAccessToken}`;
         }else{
-            config.headers.Authorization =  `Bearer${accessToken}`
+            config.headers.Authorization =  `Bearer ${accessToken}`
         }
 
         return config
