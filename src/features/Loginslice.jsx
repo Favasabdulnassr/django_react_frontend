@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { LoginUser } from "./LoginAction";
 import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";'jwt-decode'
 
 const initialState = {
     loader:false,
@@ -18,7 +19,11 @@ const userLoginSlice = createSlice({
             state.error = {};
         },
         userLogined:(state) => {
-            state.is_Authenticated = true
+            const accessToken = Cookies.get('accessToken');
+            if (accessToken) {
+              state.user = jwtDecode(accessToken);  // Decode the JWT token
+              state.is_Authenticated = true;
+            }
         },
         userLogout:(state) =>{
             Cookies.remove("accessToken");
@@ -48,7 +53,14 @@ const userLoginSlice = createSlice({
             state.loader = false;
             state.success = true;
             state.is_Authenticated = true;
-            state.user = JSON.parse(Cookies.get('accessToken'));
+            try {
+                console.log('parseeeeeeeeeeeee')
+                state.user = jwtDecode(JSON.parse(Cookies.get("accessToken")));
+                console.log(state.user)
+              } catch (e) {
+                console.log('perseeeeeeeeeeee')
+                console.log(e,'eeeeeeeeeeeeeeeeeeeeeee');
+              }
             
         })
         .addCase(LoginUser.rejected,(state,action) => {

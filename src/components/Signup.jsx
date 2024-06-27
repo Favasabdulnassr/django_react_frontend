@@ -280,6 +280,14 @@ function Signup() {
             </div>
 
           </form>
+
+          <div className='mt-4 text-center'>
+          Already have an account?{' '}
+          <Link to='/' className='text-indigo-600 hover:underline'>
+            Login
+          </Link>
+        </div>
+
         </div>
       </div>
     

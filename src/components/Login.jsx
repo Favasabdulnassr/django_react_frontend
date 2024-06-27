@@ -14,7 +14,7 @@ function Login() {
     const [passwordError,setPasswordError] = useState("");
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const {error,is_Authenticated } = useSelector((state) =>state.login);
+    const {error,is_Authenticated,user } = useSelector((state) =>state.login);
     
     const userInfocookie = Cookies.get("accessToken") && Cookies.get("detail")
 
@@ -29,9 +29,15 @@ function Login() {
     },[userInfocookie])
 
     useEffect(()=>{
-        if (is_Authenticated){
-            navigate("/home")
-        }else{
+        if (is_Authenticated && user.isSuperuser) {
+
+            navigate("/admin");
+
+          } else if (is_Authenticated && !user.isSuperuser) {
+
+            navigate("/home");
+          }else{
+
             navigate("/")
         }
     },[is_Authenticated])
@@ -160,6 +166,14 @@ function Login() {
                                 </button>
                             </div>
                         </form>
+
+                        <div className="mt-4 text-center">
+                         Don't have an account?{' '}
+                        <Link to='/signup' className='text-indigo-600 hover:underline'>
+                        Sign Up
+                        </Link>
+                        </div>
+
                     </div>
 
                     </div>
