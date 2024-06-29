@@ -186,6 +186,7 @@ function Profile() {
       const handleDeleteImage = () => {
         dispatch(DeletImage());
         setPreviewImage('/placeholder.png'); 
+        toast.success("Image Deleted Successfully")
         navigate("/home")
       };
     

@@ -51,7 +51,39 @@ export const updateUser = createAsyncThunk(
   
 
   
+  export const deleteUser = createAsyncThunk(
+    'admin/deleteUser',
+    async ({ userId }, thunkAPI) => {
+        console.log('apithunk', userId)
+      const token = Cookies.get('accessToken');
+      console.log('useruseruser  :' , userId)
+      
+      if (!token) {
+        return thunkAPI.rejectWithValue('No access token available');
+      }
+      console.log(token)
+  
+      try {
+        const response = await axios.delete(`${base_url}/api/users/users/${userId}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        return { userId, message: response.data };
+    } catch (error) {
+        if(error.response){
+            console.error(error.response)
+            return thunkAPI.rejectWithValue(error.response?.data || 'An error occurred');
 
+        }else{
+            console.log(error)
+        }
+      }
+    }
+  );
+  
+
+  
 
 
 
@@ -76,13 +108,11 @@ const adminSlice = createSlice({
             state.status = 'failed';
             state.error = action.payload;
         })
-        // Update user reducers
         .addCase(updateUser.pending, (state) => {
             state.status = 'loading';
         })
         .addCase(updateUser.fulfilled, (state, action) => {
             state.status = 'succeeded';
-            // Update the specific user in state.users array if needed
             state.users = state.users.map(user => 
                 user.id === action.payload.id ? action.payload : user
             );
@@ -90,7 +120,19 @@ const adminSlice = createSlice({
         .addCase(updateUser.rejected, (state, action) => {
             state.status = 'failed';
             state.error = action.payload;
+        })
+        .addCase(deleteUser.pending, (state) => {
+            state.status = 'loading';
+        })
+        .addCase(deleteUser.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.users = state.users.filter(user=> user.id !== action.payload);
+        })
+        .addCase(deleteUser.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.payload;
         });
+      
       
     }
 });

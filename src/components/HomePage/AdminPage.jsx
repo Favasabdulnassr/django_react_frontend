@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers } from '../../features/AdminSlice';
+import { deleteUser, fetchUsers } from '../../features/AdminSlice';
 import { useNavigate } from 'react-router-dom';
 import { updateUser } from '../../features/AdminSlice';
 import { userLogout } from '../../features/Loginslice';
+import { toast } from 'react-toastify';
 
 const AdminPage = () => {
   const dispatch = useDispatch();
@@ -16,7 +17,11 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({ id: null, first_name: '', last_name: '', email: '' });
-
+  
+  
+  useEffect(()=>{
+    console.log('sshshshshshscndhiosfho',users)
+  })
   useEffect(()=>{
     if (is_Authenticated && user.isSuperuser){
       navigate("/admin")
@@ -63,6 +68,18 @@ const AdminPage = () => {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+  const handleDeleteUser = (userId) => {
+    dispatch(deleteUser({ userId }))
+      .then(() => {
+        window.location.reload() 
+
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+        toast.error("Failed to delete user");
+      });
+  };
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
@@ -122,8 +139,8 @@ const AdminPage = () => {
                 <>
                   <div>
                    
-                    <div className="text-lg font-medium text-gray-900">{user.first_name} {user.last_name}</div>
-                    <div className="text-gray-500">{user.email}</div>
+                    <div className="text-lg font-medium text-gray-900">{user?.first_name} {user?.last_name}</div>
+                    <div className="text-gray-500">{user?.email}</div>
                   </div>
                   <div className="flex space-x-2">
                     <button 
@@ -131,6 +148,13 @@ const AdminPage = () => {
                       className="bg-yellow-500 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
                     >
                       Edit
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteUser(user.id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
+                    >
+                      Delete
                     </button>
                    
                   </div>
